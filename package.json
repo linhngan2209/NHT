@@ -28,9 +28,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    
     "eject": "react-scripts eject",
-     "test": "jest"
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": [
@@ -55,9 +54,6 @@
     "@babel/preset-env": "^7.25.3",
     "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
-    "@types/jest": "^29.5.12",
-    "babel-jest": "^29.7.0",
-    "jest": "^27.5.1",
-    "ts-jest": "^29.2.4"
+    "babel-jest": "^29.7.0"
   }
 }

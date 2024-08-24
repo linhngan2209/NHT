@@ -1,32 +1,68 @@
+// App.tsx
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import UserManagement from './pages/UserManagementPage';
 import ChargingStationManagement from './pages/ChargingStationPage';
 import Dashboard from './pages/Dashboard';
 import EditChargingStationPage from './pages/EditChargingStationPage';
-import Header from './components/Header';
 import TechnicalPage from './pages/TechnicalPage';
 import HistoryChargingPage from './pages/HistoryChargingPage';
 import EditUserPage from './pages/EditUserPage';
 import HistoryUserStationPage from './pages/HistoryUserStationPage';
 import AddUserPage from './pages/AddUserPage';
 import AddChargingStationPage from './pages/AddChargingStationPage';
+import LoginPage from './pages/LoginPage';
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode; isAuthenticated: boolean }> = ({ children, isAuthenticated }) => {
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+};
 
 const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true); 
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false); 
+  };
 
   return (
     <Router>
       <div className="flex">
-        <Sidebar />
-        <div className="ml-64 p-6 flex-1">
+        {isAuthenticated && <Sidebar />} {/* Hiện sidebar nếu đã đăng nhập */}
+        <div className={isAuthenticated ? "ml-64 p-6 flex-1" : "p-6 flex-1"}>
           <Routes>
-            <Route path="/" element={<Dashboard/>} />
-            <Route path="/users" element={<UserManagement />} />
-            <Route path="/charging-stations" element={<ChargingStationManagement />} />
+            <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/charging-stations"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <ChargingStationManagement />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/edit-station/:id" element={<EditChargingStationPage />} />
             <Route path="/edit-user/:id" element={<EditUserPage />} />
-            <Route path="/technical-support" element={<TechnicalPage/>} />
+            <Route path="/technical-support" element={<TechnicalPage />} />
             <Route path="/history-charging/:id" element={<HistoryChargingPage />} />
             <Route path="/charging-station-history/:stationName" element={<HistoryUserStationPage />} />
             <Route path="/add-user" element={<AddUserPage />} />

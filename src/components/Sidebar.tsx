@@ -2,7 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaTachometerAlt, FaUsers, FaChargingStation, FaTools, FaSignOutAlt } from 'react-icons/fa';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onLogout: () => void; // Thêm prop onLogout
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
   return (
     <div className="w-64 h-screen bg-gray-800 text-white p-4 fixed top-0 left-0">
       <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
@@ -32,10 +36,13 @@ const Sidebar: React.FC = () => {
           </Link>
         </li>
         <li className="mb-2">
-          <Link to="/logout" className="flex items-center py-2 px-4 rounded hover:bg-gray-600">
+          <button 
+            onClick={onLogout} // Gọi hàm onLogout
+            className="flex items-center py-2 px-4 rounded hover:bg-gray-600 w-full text-left"
+          >
             <FaSignOutAlt className="mr-2" />
             Log Out
-          </Link>
+          </button>
         </li>
       </ul>
     </div>

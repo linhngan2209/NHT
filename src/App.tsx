@@ -32,7 +32,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="flex">
-        {isAuthenticated && <Sidebar />} {/* Hiện sidebar nếu đã đăng nhập */}
+        {isAuthenticated && <Sidebar onLogout={handleLogout}/>} {/* Hiện sidebar nếu đã đăng nhập */}
         <div className={isAuthenticated ? "ml-64 p-6 flex-1" : "p-6 flex-1"}>
           <Routes>
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />

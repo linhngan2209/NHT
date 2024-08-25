@@ -1,14 +1,13 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-    baseURL: 'http://localhost:8080/', 
+    baseURL: 'https://ev-charging-server-z3gr3glbrq-de.a.run.app/', 
     timeout: 10000,                      
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Add a request interceptor
 axiosClient.interceptors.request.use(
     function (config) {
         const token = localStorage.getItem('token');

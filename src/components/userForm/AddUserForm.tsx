@@ -6,9 +6,9 @@ interface AddUserFormProps {
 }
 
 interface NewUser {
+  role: string ;
   phoneNumber: string;
   password: string;
-  role: 'user' | 'technical';
   userBrand: string;
 }
 

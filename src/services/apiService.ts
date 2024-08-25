@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-    baseURL: 'https://ev-charging-server-z3gr3glbrq-de.a.run.app/', 
+    baseURL: 'http://localhost:8080/', 
     timeout: 10000,                      
     headers: {
         'Content-Type': 'application/json',

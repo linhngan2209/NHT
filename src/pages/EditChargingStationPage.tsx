@@ -2,21 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import EditChargingStationForm from '../components/chargingStationForm/EditChargingStationForm';
 import { ChargingStation } from '../types/ChargingStation';
-import { fetchChargingStations } from '../services/ChargingStationService';
+import { fetchChargingStations, getCharingStationById } from '../services/ChargingStationService';
+import LoadingSpinner from '../components/Loading';
 
 const EditChargingStationPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [station, setStation] = useState<ChargingStation | undefined>();
-  const [chargingStations, setChargingStations] = useState<ChargingStation[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getChargingStations = async () => {
       try {
-        const data = await fetchChargingStations('0886561303');
-       
-        setStation(data[0]);
+        if (id) {
+          const data = await getCharingStationById(id);
+          setStation(data);
+        }
       } catch (err) {
         console.error('Failed to fetch charging stations:', err);
       } finally {
@@ -25,12 +26,11 @@ const EditChargingStationPage: React.FC = () => {
     };
 
     getChargingStations();
-  }, []);
- 
-console.log(station)
+  }, [id]);
+
   const handleSave = (updatedStation: ChargingStation) => {
     console.log('Updated station:', updatedStation);
-    navigate('/'); 
+    navigate('/');
   };
 
   const handleCancel = () => {
@@ -39,10 +39,12 @@ console.log(station)
 
   return (
     <div className="p-6">
-      {station ? (
+      {loading ? (
+        <LoadingSpinner />  
+      ) : station ? (
         <EditChargingStationForm station={station} onSave={handleSave} onCancel={handleCancel} />
       ) : (
-        <p>Loading...</p>
+        <p>Station not found.</p>
       )}
     </div>
   );

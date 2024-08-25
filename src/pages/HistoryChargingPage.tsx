@@ -20,19 +20,41 @@ const HistoryChargingPage: React.FC = () => {
     fetchChargingHistory();
   }, [id]);
 
-  // Phân trang và tìm kiếm
-  const totalPages = Math.ceil(chargingHistory.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-
   const filteredHistory = chargingHistory.filter(history =>
     history.stationName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
   const currentHistory = filteredHistory.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const getPaginationPages = () => {
+    const pageRange = 3; // Số lượng trang xung quanh trang hiện tại
+    let startPage = Math.max(1, currentPage - pageRange);
+    let endPage = Math.min(totalPages, currentPage + pageRange);
+
+    let pages: (number | string)[] = Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    );
+
+    if (startPage > 1) {
+      pages.unshift(1, '...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...', totalPages);
+    }
+
+    return pages;
+  };
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Charging History </h1>
+      <h1 className="text-2xl font-bold mb-4">Charging History</h1>
       <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4">
         <div className="mb-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
@@ -60,52 +82,63 @@ const HistoryChargingPage: React.FC = () => {
         <table className="w-full bg-white border border-gray-300 rounded-lg overflow-hidden text-sm">
           <thead className="bg-gray-200 text-gray-700">
             <tr>
-              <th className="px-4 py-2 text-left align-middle">STT</th>
-              <th className="px-4 py-2 text-left align-middle">Date</th>
-              <th className="px-4 py-2 text-left align-middle">Station</th>
-              <th className="px-4 py-2 text-left align-middle">Amount Charged</th>
-              <th className="px-4 py-2 text-left align-middle">Duration</th>
-              <th className="px-4 py-2 text-left align-middle">Status</th>
+              <th className="px-4 py-2 text-left">No.</th>
+              <th className="px-4 py-2 text-left">Date</th>
+              <th className="px-4 py-2 text-left">Station</th>
+              <th className="px-4 py-2 text-left">Amount Charged</th>
+              <th className="px-4 py-2 text-left">Duration</th>
+              <th className="px-4 py-2 text-left">Status</th>
             </tr>
           </thead>
           <tbody className="text-gray-600">
             {currentHistory.map((history, index) => (
               <tr key={index} className="bg-gray-50 hover:bg-gray-100">
-                <td className="px-4 py-2 align-middle">{startIndex + index + 1}</td>
-                <td className="px-4 py-2 align-middle">{new Date(history.chargeDate).toLocaleString('vi-VN', { timeZone: 'UTC', hour12: false })}</td>
-                <td className="px-4 py-2 align-middle">{history.stationName}</td>
-                <td className="px-4 py-2 align-middle">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(history.price)}</td>
-                <td className="px-4 py-2 align-middle">{history.totalChargeTime} phút</td>
-                <td className="px-4 py-2 align-middle">{history.paymentStatus}</td>
+                <td className="px-4 py-2">{startIndex + index + 1}</td>
+                <td className="px-4 py-2">{new Date(history.chargeDate).toLocaleString('vi-VN', { timeZone: 'UTC', hour12: false })}</td>
+                <td className="px-4 py-2">{history.stationName}</td>
+                <td className="px-4 py-2">
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                  }).format(history.price)}
+                </td>
+                <td className="px-4 py-2">{history.totalChargeTime}</td>
+                <td className="px-4 py-2">{history.paymentStatus}</td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="mt-4 flex justify-end items-center space-x-2 text-sm text-gray-700">
           <button
-            onClick={() => setCurrentPage(currentPage - 1)}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className="bg-gray-200 text-gray-600 px-3 py-1 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            aria-label="Previous"
           >
-            Previous
+            &lt;
           </button>
           <div className="flex space-x-1">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index + 1}
-                onClick={() => setCurrentPage(index + 1)}
-                className={`px-3 py-1 rounded-md border text-gray-700 ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white border-gray-300 hover:bg-gray-100'}`}
-              >
-                {index + 1}
-              </button>
-            ))}
+            {getPaginationPages().map((page, index) =>
+              page === '...' ? (
+                <span key={index} className="px-3 py-1">...</span>
+              ) : (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(Number(page))}
+                  className={`px-3 py-1 rounded-md border text-gray-700 ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-white border-gray-300 hover:bg-gray-100'}`}
+                >
+                  {page}
+                </button>
+              )
+            )}
           </div>
           <button
-            onClick={() => setCurrentPage(currentPage + 1)}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="bg-gray-200 text-gray-600 px-3 py-1 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            aria-label="Next"
           >
-            Next
+            &gt;
           </button>
         </div>
       </div>

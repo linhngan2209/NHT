@@ -8,7 +8,7 @@ interface UserTableProps {
   onDelete: (id: string) => void;
   onView: (userId: string) => void;
   onAdd: () => void;
-  onExport?: () => void;
+  onExport: (user: any) => void;
 }
 
 const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete, onView, onAdd, onExport }) => {
@@ -62,7 +62,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete, onView, 
             <FaPlus className="mr-1" /> Add
           </button>
           <button
-            onClick={onExport}
+            onClick={() => onExport(users)}
             className="flex items-center bg-green-500 text-white px-3 py-1 rounded-md shadow-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             <FaDownload className="mr-1" /> Export
@@ -91,7 +91,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete, onView, 
               <td className="px-4 py-2 align-middle">{user.email}</td>
               <td className="px-4 py-2 align-middle">{user.phoneNumber}</td>
               <td className="px-4 py-2 align-middle">{user.carBrand}</td>
-              <td className="px-4 py-2 align-middle">{user.rule}</td>
+              <td className="px-4 py-2 align-middle">{user.role}</td>
               <td className="px-4 py-2 align-middle">
                 <div className="flex space-x-2">
                   <button

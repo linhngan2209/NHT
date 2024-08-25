@@ -8,7 +8,7 @@ const HistoryUserStationPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(5);
-console.log(stationName)
+
   useEffect(() => {
     const fetchChargingHistory = async () => {
       if (stationName) {
@@ -21,7 +21,7 @@ console.log(stationName)
   }, [stationName]);
 
  
- console.log(chargingHistory)
+ 
   const totalPages = Math.ceil(chargingHistory.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
 
@@ -33,7 +33,7 @@ console.log(stationName)
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">User History at {stationName} Station</h1>
+      <h1 className="text-2xl font-bold mb-4">User History at {stationName}</h1>
       <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4">
         <div className="mb-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
@@ -61,7 +61,7 @@ console.log(stationName)
         <table className="w-full bg-white border border-gray-300 rounded-lg overflow-hidden text-sm">
           <thead className="bg-gray-200 text-gray-700">
             <tr>
-              <th className="px-4 py-2 text-left align-middle">STT</th>
+              <th className="px-4 py-2 text-left align-middle">No.</th>
               <th className="px-4 py-2 text-left align-middle">Phone Number</th>
               <th className="px-4 py-2 text-left align-middle">Charge Date</th>
               <th className="px-4 py-2 text-left align-middle">Total Charge Time</th>

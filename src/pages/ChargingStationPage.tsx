@@ -3,6 +3,8 @@ import ChargingStationTable from '../components/chargingStationTable/ChargingSta
 import { ChargingStation } from '../types/ChargingStation';
 import { fetchChargingStations } from '../services/ChargingStationService';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../components/Loading';
+import Papa from 'papaparse';
 
 const ChargingStationManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +15,9 @@ const ChargingStationManagementPage: React.FC = () => {
   useEffect(() => {
     const getChargingStations = async () => {
       try {
-        const data = await fetchChargingStations('0886561303');
+        const phoneNumber = localStorage.getItem('phoneNumber');
+       
+        const data = await fetchChargingStations(phoneNumber);
         setChargingStations(data);
       } catch (err) {
         console.error('Failed to fetch charging stations:', err);
@@ -24,13 +28,24 @@ const ChargingStationManagementPage: React.FC = () => {
 
     getChargingStations();
   }, []);
-
+  const handleExport = (data : any) => {
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'data.csv');
+    a.style.visibility = 'hidden';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
   if (loading) {
-    return <p>Loading...</p>;
+    return <LoadingSpinner />;
   }
 
-  const handleEdit = () => {
-    navigate(`/edit-station/66c324859d596518aa4614da`); 
+  const handleEdit = (id: string) => {
+    navigate(`/edit-station/${id}`); 
   };
   
  
@@ -61,7 +76,7 @@ const ChargingStationManagementPage: React.FC = () => {
             bussinessStatus: station.businessStatus,
             openingHours: 'Open',
             rating: station.user_ratings_total,
-            totalChargingPorts: 9, // Set this based on your logic
+            totalChargingPorts: 9, 
           },
           user_ratings_total: 0,
           businessStatus: '',
@@ -86,7 +101,7 @@ const ChargingStationManagementPage: React.FC = () => {
   return (
     <div>
       <ChargingStationTable 
-        onExport={handleAdd} 
+        onExport={handleExport} 
         onAdd={handleAdd}
         stations={chargingStations} 
         onEdit={handleEdit} 

@@ -4,11 +4,11 @@ import { FaEdit, FaTrash, FaEye, FaPlus, FaDownload } from 'react-icons/fa';
 
 interface ChargingStationTableProps {
   stations: ChargingStation[];
-  onEdit: () => void;
+  onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onView: (stationName: string) => void;
   onAdd: () => void;
-  onExport: () => void;
+  onExport: (data: any) => void;
 }
 
 const ChargingStationTable: React.FC<ChargingStationTableProps> = ({ 
@@ -34,6 +34,26 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const getPaginationPages = () => {
+    const pageRange = 3;
+    let startPage = Math.max(1, currentPage - pageRange);
+    let endPage = Math.min(totalPages, currentPage + pageRange);
+
+    let pages: (number | string)[] = Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    );
+
+    if (startPage > 1) {
+      pages.unshift(1, '...'); 
+    }
+    if (endPage < totalPages) {
+      pages.push('...', totalPages); 
+    }
+
+    return pages;
   };
 
   return (
@@ -68,7 +88,7 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
             <FaPlus className="mr-1" /> Add
           </button>
           <button
-            onClick={onExport}
+            onClick={() => onExport(stations)}
             className="flex items-center bg-green-500 text-white px-3 py-1 rounded-md shadow-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             <FaDownload className="mr-1" /> Export
@@ -82,7 +102,7 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
             <th className="px-4 py-2 text-left">Business Status</th>
             <th className="px-4 py-2 text-left">Address</th>
             <th className="px-4 py-2 text-left">Name</th>
-            <th className="px-4 py-2 text-left">Charging port</th>
+            <th className="px-4 py-2 text-left">Charging Port</th>
             <th className="px-4 py-2 text-left">Location</th>
             <th className="px-4 py-2 text-left">Opening Status</th>
             <th className="px-4 py-2 text-left">Status</th>
@@ -110,7 +130,7 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
                     <FaEye className="text-lg" />
                   </button>
                   <button
-                    onClick={() => onEdit()}
+                    onClick={() => onEdit(station._id)}
                     className="text-gray-600 hover:text-gray-800"
                     aria-label="Edit"
                   >
@@ -136,18 +156,22 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
           className="bg-gray-200 text-gray-600 px-3 py-1 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
           aria-label="Previous"
         >
-          Previous
+          &lt;
         </button>
         <div className="flex space-x-1">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-3 py-1 rounded-md border text-gray-700 ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white border-gray-300 hover:bg-gray-100'}`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          {getPaginationPages().map((page, index) =>
+            page === '...' ? (
+              <span key={index} className="px-3 py-1">...</span> // Render as span if ellipsis
+            ) : (
+              <button
+                key={index}
+                onClick={() => handlePageChange(Number(page))} // Ensure conversion to number
+                className={`px-3 py-1 rounded-md border text-gray-700 ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-white border-gray-300 hover:bg-gray-100'}`}
+              >
+                {page}
+              </button>
+            )
+          )}
         </div>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
@@ -155,7 +179,7 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
           className="bg-gray-200 text-gray-600 px-3 py-1 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
           aria-label="Next"
         >
-          Next
+          &gt;
         </button>
       </div>
     </div>

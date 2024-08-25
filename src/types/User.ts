@@ -1,6 +1,6 @@
 export interface User {
     user: any;
-    rule: string;
+    role: string;
     _id: string;
     phoneNumber: string;
     name: string;

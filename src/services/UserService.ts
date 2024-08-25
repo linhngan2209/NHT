@@ -1,12 +1,12 @@
 import axiosClient from "./apiService";
 
 
-export const getUserByManager = async (phoneNumber: string, rule: string) => {
+export const getUserByManager = async (phoneNumber: string | null, role: string) => {
   try {
     const response = await axiosClient.get('/webapi/fetch_user', {
         params : {
             phoneNumber: phoneNumber,
-            rule: rule,
+            role: role,
         }
     });
     return response.data;
@@ -65,6 +65,18 @@ export const getHistoryCharging = async (userId: string) => {
     try {
       const response = await axiosClient.post(`/webapi/createUser`, {
         newUser: newUser
+      });
+      return response;
+    } catch (error) {
+      console.error('Error fetching charging stations:', error);
+      throw error;
+    }
+  };
+
+  export const login = async (loginUser: any) => {
+    try {
+      const response = await axiosClient.post(`/webapi/login`, {
+        newUser: loginUser
       });
       return response;
     } catch (error) {

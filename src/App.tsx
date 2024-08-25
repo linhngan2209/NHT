@@ -1,5 +1,4 @@
-// App.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import UserManagement from './pages/UserManagementPage';
@@ -19,14 +18,19 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; isAuthenticated: boo
 };
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
 
   const handleLogin = () => {
-    setIsAuthenticated(true); 
+    setIsAuthenticated(true);
+    localStorage.setItem('isAuthenticated', 'true'); // Lưu vào localStorage
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false); 
+    setIsAuthenticated(false);
+    localStorage.removeItem('isAuthenticated'); // Xóa trạng thái đăng nhập khỏi localStorage
+    localStorage.removeItem('phoneNumber'); // Xóa phoneNumber khỏi localStorage
   };
 
   return (

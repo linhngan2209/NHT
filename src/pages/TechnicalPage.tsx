@@ -16,7 +16,8 @@ const TechnicalPage: React.FC = () => {
   }, []);
 
   const fetchUsers = async () => {
-    const fetchedUsers = await getUserByManager('0886561303', 'tech');
+    const phoneNumber = localStorage.getItem('phoneNumber');
+    const fetchedUsers = await getUserByManager(phoneNumber, 'technical');
     setUsers(fetchedUsers);
   };
 

@@ -1,24 +1,34 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/UserService';
+import Alert from '../components/Notification';
 
 const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-   
-    if (phoneNumber === '0886561303' && password === '123456') {
-      setError('');
-      onLogin(); // Call onLogin function on successful login
-      navigate('/'); // Redirect to the dashboard
+    const loginUser = { phoneNumber, password }
+    const res = await login(loginUser)
+    setShowAlert(true);
+    if (res.data) {
+      setAlertMessage('Login successful!')
+      localStorage.setItem('phoneNumber', phoneNumber);
+      onLogin();
+      navigate('/')
     } else {
-      setError('Invalid phone number or password.');
+      setAlertMessage('Login fail!')
     }
   };
 
+  setTimeout(() => {
+    setShowAlert(false);
+  }, 3000);
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
@@ -66,6 +76,7 @@ const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
           Don't have an account? <a href="/register" className="text-blue-500 hover:text-blue-700">Register</a>
         </p>
       </div>
+      {showAlert && <Alert message={alertMessage} />}
     </div>
   );
 };

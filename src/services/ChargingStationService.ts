@@ -2,7 +2,7 @@ import axiosClient from "./apiService";
 
 
 
-export const fetchChargingStations = async (phone: string) => {
+export const fetchChargingStations = async (phone: string | null) => {
   try {
     const response = await axiosClient.get('/webapi/fetch_charging_station', {
       params :{
@@ -32,7 +32,6 @@ export const getHistoryChargingStationsByUser = async (stationName: string) => {
 
 export const postNewStation = async (newStation: any) => {
   try {
-    console.log(newStation)
     const response = await axiosClient.post(`/webapi/createStation`, {
       newStation: newStation
     });
@@ -42,3 +41,13 @@ export const postNewStation = async (newStation: any) => {
     throw error;
   }
 };
+
+export const getCharingStationById = async (id: string) => {
+  try {
+    const response = await axiosClient.get(`/webapi/fetch_charging_station_byId/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching charging stations:', error);
+    throw error;
+  }
+}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaTachometerAlt, FaUsers, FaChargingStation, FaTools, FaSignOutAlt } from 'react-icons/fa';
 
 interface SidebarProps {
-  onLogout: () => void; // Thêm prop onLogout
+  onLogout: () => void; 
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
         </li>
         <li className="mb-2">
           <button 
-            onClick={onLogout} // Gọi hàm onLogout
+            onClick={onLogout} 
             className="flex items-center py-2 px-4 rounded hover:bg-gray-600 w-full text-left"
           >
             <FaSignOutAlt className="mr-2" />

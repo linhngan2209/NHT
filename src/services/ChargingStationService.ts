@@ -30,10 +30,11 @@ export const getHistoryChargingStationsByUser = async (stationName: string) => {
   }
 };
 
-export const postNewStation = async (newStation: any) => {
+export const postNewStation = async (phone: string, newStation: any) => {
   try {
     const response = await axiosClient.post(`/webapi/createStation`, {
-      newStation: newStation
+      newStation: newStation,
+      phone: phone
     });
     return response;
   } catch (error) {
@@ -51,3 +52,23 @@ export const getCharingStationById = async (id: string) => {
     throw error;
   }
 }
+
+export const updateChargingStation = async (id: string, updateData: any) => {
+  try {
+    const response = await axiosClient.patch(`/charging-test/${id}`, updateData);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi cập nhật trạm sạc:', error);
+    throw error;
+  }
+}
+
+export const deleteStation = async (id: string) => {
+  try {
+    const response = await axiosClient.delete(`/webapi/delete_station/${id}`)
+    return response;
+  } catch (error) {
+    console.error('Error fetching charging stations:', error);
+    throw error;
+  }
+};

@@ -105,13 +105,12 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
             <th className="px-4 py-2 text-left">Charging Port</th>
             <th className="px-4 py-2 text-left">Location</th>
             <th className="px-4 py-2 text-left">Opening Status</th>
-            <th className="px-4 py-2 text-left">Status</th>
             <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody className="text-gray-600">
           {currentStations.map((station, index) => (
-            <tr key={station.id} className="bg-gray-50 hover:bg-gray-100">
+            <tr key={station._id} className="bg-gray-50 hover:bg-gray-100">
               <td className="px-4 py-2">{startIndex + index + 1}</td> {/* Serial number */}
               <td className="px-4 py-2">{station.properties.bussinessStatus}</td>
               <td className="px-4 py-2">{station.properties.address}</td>
@@ -119,7 +118,6 @@ const ChargingStationTable: React.FC<ChargingStationTableProps> = ({
               <td className="px-4 py-2">{station.properties.totalChargingPorts}</td>
               <td className="px-4 py-2">{JSON.stringify(station.geometry.coordinates)}</td>
               <td className="px-4 py-2">{station.properties.openingHours}</td>
-              <td className="px-4 py-2">{'Active'}</td>
               <td className="px-4 py-2">
                 <div className="flex justify-center space-x-2">
                   <button

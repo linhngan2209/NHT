@@ -7,7 +7,7 @@ const AddChargingStationPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSave = async (newStation: any) => {
-    
+    const phone = localStorage.getItem('phoneNumber');
     const station = {
         type: "Feature",
         geometry: {
@@ -25,8 +25,11 @@ const AddChargingStationPage: React.FC = () => {
           totalChargingPorts: newStation.totalChargingPorts,
         }
     }
-    const res = await postNewStation (station)
-    navigate('/charging-stations'); 
+    if (phone) {
+      const res = await postNewStation (phone, station)
+      navigate('/charging-stations'); 
+    }
+   
   };
 
   const handleCancel = () => {

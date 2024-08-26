@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import EditChargingStationForm from '../components/chargingStationForm/EditChargingStationForm';
 import { ChargingStation } from '../types/ChargingStation';
-import { fetchChargingStations, getCharingStationById } from '../services/ChargingStationService';
+import { fetchChargingStations, getCharingStationById, updateChargingStation } from '../services/ChargingStationService';
 import LoadingSpinner from '../components/Loading';
 
 const EditChargingStationPage: React.FC = () => {
@@ -28,9 +28,12 @@ const EditChargingStationPage: React.FC = () => {
     getChargingStations();
   }, [id]);
 
-  const handleSave = (updatedStation: ChargingStation) => {
-    console.log('Updated station:', updatedStation);
-    navigate('/');
+  const handleSave = async (updatedStation: ChargingStation) => {
+    if (id) {
+      const res = await updateChargingStation(id, updatedStation)
+      navigate('/charging-stations');
+    }
+
   };
 
   const handleCancel = () => {
@@ -40,7 +43,7 @@ const EditChargingStationPage: React.FC = () => {
   return (
     <div className="p-6">
       {loading ? (
-        <LoadingSpinner />  
+        <LoadingSpinner />
       ) : station ? (
         <EditChargingStationForm station={station} onSave={handleSave} onCancel={handleCancel} />
       ) : (

@@ -1,9 +1,4 @@
 export interface ChargingStation {
-  id: string | undefined;
-  user_ratings_total: number;
-  businessStatus: string;
-  name: string;
-  formatted_address: string;
   _id: string; 
   type: string; 
   geometry: {
@@ -20,5 +15,5 @@ export interface ChargingStation {
       rating: number; 
       totalChargingPorts: number; 
   };
-  status?: "AVAILABLE" | "UNAVAILABLE";
+  status?: boolean;
 }

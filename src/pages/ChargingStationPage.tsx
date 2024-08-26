@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import ChargingStationTable from '../components/chargingStationTable/ChargingStationTable';
 import { ChargingStation } from '../types/ChargingStation';
-import { fetchChargingStations } from '../services/ChargingStationService';
+import { deleteStation, fetchChargingStations } from '../services/ChargingStationService';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/Loading';
 import Papa from 'papaparse';
+import Alert from '../components/Notification';
 
 const ChargingStationManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const [chargingStations, setChargingStations] = useState<ChargingStation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingStation, setEditingStation] = useState<ChargingStation | undefined>(undefined);
- 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
   useEffect(() => {
     const getChargingStations = async () => {
       try {
         const phoneNumber = localStorage.getItem('phoneNumber');
-       
         const data = await fetchChargingStations(phoneNumber);
         setChargingStations(data);
       } catch (err) {
@@ -53,53 +53,37 @@ const ChargingStationManagementPage: React.FC = () => {
       navigate(`/charging-station-history/${station}`);
     };
   
-  const handleSave = (station: ChargingStation) => {
-    if (editingStation) {
-        
-        setChargingStations((prev) => 
-            prev.map(s => s._id === station._id? station : s)
-        );
-    } else {
-      
-        const newStation: ChargingStation = {
-          _id: chargingStations[0]?.id || '',
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [station.geometry.lat, station.geometry.lng],
-            lng: 0,
-            lat: 0
-          },
-          properties: {
-            stationName: station?.name,
-            address: station.formatted_address,
-            bussinessStatus: station.businessStatus,
-            openingHours: 'Open',
-            rating: station.user_ratings_total,
-            totalChargingPorts: 9, 
-          },
-          user_ratings_total: 0,
-          businessStatus: '',
-          name: '',
-          formatted_address: '',
-          id: undefined
-        };
-
-        setChargingStations((prev) => [...prev, newStation]);
-    }
-    setEditingStation(undefined);
-};
-
+  
+    const showAlertMessage = (message: string) => {
+      setAlertMessage(message);
+      setShowAlert(true);
+  
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+    };
   const handleAdd = () => {
     navigate(`/add-station`);
   };
   
-  const handleDelete = (id: string) => {
-    setChargingStations((prev) => prev.filter(s => s._id !== id));
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm('Bạn có chắc muốn xóa không?'); 
+
+    if (confirmDelete) {
+      try {
+        await deleteStation(id);
+       setChargingStations((prev) => prev.filter(s => s._id !== id));
+        showAlertMessage('dele!'); 
+      } catch (error) {
+        showAlertMessage('Xóa người dùng thất bại!'); 
+      }
+    }
+   
   };
 
   return (
     <div>
+       {showAlert && <Alert message={alertMessage} />}
       <ChargingStationTable 
         onExport={handleExport} 
         onAdd={handleAdd}

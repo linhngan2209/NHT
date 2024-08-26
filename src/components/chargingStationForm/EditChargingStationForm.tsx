@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChargingStation } from '../../types/ChargingStation';
 
 interface ChargingStationFormProps {
@@ -7,17 +7,72 @@ interface ChargingStationFormProps {
   onCancel: () => void;
 }
 
+const openingHoursOptions = [
+  'Open',
+  'Closed',
+];
 
 const EditChargingStationForm: React.FC<ChargingStationFormProps> = ({ station, onSave, onCancel }) => {
-  const [formData, setFormData] = useState<ChargingStation>(station);
+  const [formData, setFormData] = useState<ChargingStation>({
+    ...station,
+    properties: {
+      ...station.properties,
+      openingHours: station.properties.openingHours || openingHoursOptions[0], // Khởi tạo với tùy chọn mặc định
+    },
+  });
+
+  // Cập nhật formData mỗi khi props station thay đổi
+  useEffect(() => {
+    setFormData({
+      ...station,
+      properties: {
+        ...station.properties,
+        openingHours: station.properties.openingHours || openingHoursOptions[0],
+      },
+    });
+  }, [station]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    if (name === "totalChargingPorts") {
+      setFormData((prevData) => ({
+        ...prevData,
+        properties: {
+          ...prevData.properties,
+          totalChargingPorts: Number(value),
+        },
+      }));
+    } else if (name === "lng" || name === "lat") {
+      setFormData((prevData) => ({
+        ...prevData,
+        geometry: {
+          ...prevData.geometry,
+          [name]: parseFloat(value),
+        },
+      }));
+    } else if (name === "openingHours") {
+      setFormData((prevData) => ({
+        ...prevData,
+        properties: {
+          ...prevData.properties,
+          openingHours: value, 
+        },
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        properties: {
+          ...prevData.properties,
+          [name]: value,
+        },
+      }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Updated Station Data:", formData);
     onSave(formData);
   };
 
@@ -25,67 +80,83 @@ const EditChargingStationForm: React.FC<ChargingStationFormProps> = ({ station, 
     <div className="max-w-lg mx-auto bg-white p-6 shadow-md rounded-lg">
       <h2 className="text-2xl font-semibold mb-4">Edit Charging Station</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Trường tên trạm */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+          <label className="block text-sm font-medium text-gray-700">Station Name</label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.properties?.stationName}
+            name="stationName"
+            value={formData.properties.stationName}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
+
+        {/* Trường địa chỉ */}
         <div>
-          <label htmlFor="formatted_address" className="block text-sm font-medium text-gray-700">Address</label>
+          <label className="block text-sm font-medium text-gray-700">Address</label>
           <input
             type="text"
-            id="formatted_address"
-            name="formatted_address"
-            value={formData.properties?.address}
+            name="address"
+            value={formData.properties.address}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
-          
         </div>
+
+        {/* Trường giờ mở cửa */}
         <div>
-          <label htmlFor="totalChargingPorts" className="block text-sm font-medium text-gray-700">Total Charging Ports</label>
+          <label className="block text-sm font-medium text-gray-700">Opening Hours</label>
+          <select
+            name="openingHours"
+            value={formData.properties.openingHours}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            {openingHoursOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Trường tổng số cổng sạc */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Total Charging Ports</label>
           <input
-            type="text"
-            id="totalChargingPorts"
+            type="number"
             name="totalChargingPorts"
-            value={formData.properties?.totalChargingPorts}
+            value={formData.properties.totalChargingPorts}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
-          
         </div>
+
+        {/* Trường kinh độ */}
         <div>
-          <label htmlFor="businessStatus" className="block text-sm font-medium text-gray-700">Business Status</label>
-          <select
-            id="businessStatus"
-            name="businessStatus"
-            value={formData.businessStatus}
+          <label className="block text-sm font-medium text-gray-700">Longitude</label>
+          <input
+            type="number"
+            name="lng"
+            value={formData.geometry.coordinates[0]}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="OPEN">Open</option>
-            <option value="CLOSED">Closed</option>
-          </select>
+          />
         </div>
+
+        {/* Trường vĩ độ */}
         <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status || ''} 
+          <label className="block text-sm font-medium text-gray-700">Latitude</label>
+          <input
+            type="number"
+            name="lat"
+            value={formData.geometry.coordinates[1]}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="AVAILABLE">Available</option>
-            <option value="UNAVAILABLE">Unavailable</option>
-          </select>
+          />
         </div>
+
         <div className="flex justify-end space-x-3">
           <button
             type="button"

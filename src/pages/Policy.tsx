@@ -41,7 +41,7 @@ const PrivacyPolicy = () => {
 
         <h2 className="text-2xl font-semibold mb-4">7. Liên Hệ</h2>
         <p className="mb-4">
-          Nếu bạn có bất kỳ câu hỏi nào về chính sách bảo mật này, vui lòng liên hệ với tôi qua email: <a href="mailto:privacy@linhngan.vn" className="text-blue-500">privacy@linhngan.vn</a>.
+          Nếu bạn có bất kỳ câu hỏi nào về chính sách bảo mật này, vui lòng liên hệ với tôi qua email: <a href="mailto:linhngan220902@gmail.com" className="text-blue-500">linhngan220902@gmail.com</a>.
         </p>
 
         <h2 className="text-2xl font-semibold mb-4">8. Thay Đổi Chính Sách</h2>
@@ -49,7 +49,7 @@ const PrivacyPolicy = () => {
           Tôi có thể thay đổi chính sách bảo mật này khi cần thiết. Mọi thay đổi sẽ được cập nhật trên trang web hoặc trong ứng dụng.
         </p>
 
-        <p className="text-sm text-gray-600">Cập nhật lần cuối: Ngày 16 tháng 09 năm 2024</p>
+        <p className="text-sm text-gray-600">Cập nhật lần cuối: Ngày 17 tháng 09 năm 2024</p>
       </div>
     </div>
   );

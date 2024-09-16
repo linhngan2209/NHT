@@ -12,6 +12,7 @@ import HistoryUserStationPage from './pages/HistoryUserStationPage';
 import AddUserPage from './pages/AddUserPage';
 import AddChargingStationPage from './pages/AddChargingStationPage';
 import LoginPage from './pages/LoginPage';
+import PrivacyPolicy from './pages/Policy';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; isAuthenticated: boolean }> = ({ children, isAuthenticated }) => {
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
@@ -40,6 +41,7 @@ const App: React.FC = () => {
         <div className={isAuthenticated ? "ml-64 p-6 flex-1" : "p-6 flex-1"}>
           <Routes>
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route
               path="/"
               element={

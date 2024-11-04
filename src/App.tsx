@@ -13,6 +13,7 @@ import AddUserPage from './pages/AddUserPage';
 import AddChargingStationPage from './pages/AddChargingStationPage';
 import LoginPage from './pages/LoginPage';
 import PrivacyPolicy from './pages/Policy';
+import HomeScreenPage from './pages/HomeScreenPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; isAuthenticated: boolean }> = ({ children, isAuthenticated }) => {
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
@@ -37,8 +38,9 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="flex">
-        {isAuthenticated && <Sidebar onLogout={handleLogout}/>} {/* Hiện sidebar nếu đã đăng nhập */}
-        <div className={isAuthenticated ? "ml-64 p-6 flex-1" : "p-6 flex-1"}>
+     
+       {/* // {isAuthenticated && <Sidebar onLogout={handleLogout}/>} Hiện sidebar nếu đã đăng nhập */}
+        <div className={"p-0 flex-1"}>
           <Routes>
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -66,6 +68,7 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+             <Route path="/home" element={<HomeScreenPage />} />
             <Route path="/edit-station/:id" element={<EditChargingStationPage />} />
             <Route path="/edit-user/:id" element={<EditUserPage />} />
             <Route path="/technical-support" element={<TechnicalPage />} />
